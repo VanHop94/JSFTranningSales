@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram model-entity="SeamPagesDiagram">
+ <item ID="#employee.jsf" NAME="#xemployee.jsf" PATH="/employee.jsf"
+  SHAPE="24,17,0,0" TYPE="page" model-entity="SeamPagesDiagramItem"/>
+ <item ID="javax.persistence.OptimisticLockException"
+  NAME="exception:javax.persistence.OptimisticLockException"
+  PATH="javax.persistence.OptimisticLockException" SHAPE="24,121,0,0"
+  TYPE="exception" model-entity="SeamPagesDiagramItem">
+  <output ID="/error.jsf" NAME="output" PATH="/error.jsf"
+   TARGET="#xerror.jsf" model-entity="SeamPagesDiagramItemOutput"/>
+ </item>
+ <item NAME="#xerror.jsf" PATH="/error.jsf" SHAPE="344,121,0,0"
+  TYPE="page" model-entity="SeamPagesDiagramItem"/>
+ <item ID="javax.persistence.EntityNotFoundException"
+  NAME="exception:javax.persistence.EntityNotFoundException"
+  PATH="javax.persistence.EntityNotFoundException" SHAPE="24,225,0,0"
+  TYPE="exception" model-entity="SeamPagesDiagramItem">
+  <output ID="/error.jsf" NAME="output" PATH="/error.jsf"
+   TARGET="#xerror.jsf" model-entity="SeamPagesDiagramItemOutput"/>
+ </item>
+</diagram>

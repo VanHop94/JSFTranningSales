@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+	<persistence-unit name="entityManagerFactoryUnit" transaction-type="JTA">
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+		<jta-data-source>db2</jta-data-source>
+		<class>com.syntask.sale.entity.Employee</class>
+		<properties>
+			<property name="openjpa.RuntimeUnenhancedClasses" value="supported" />
+		</properties>
+	</persistence-unit>
+</persistence>

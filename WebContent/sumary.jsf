@@ -1,0 +1,257 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:jsflot="http://www.jsflot.org/taglib/jsflot"
+	style="overflow: auto">
+	<f:view contentType="text/html">
+		<head>
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<link rel="stylesheet" type="text/css"
+				href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap/css/bootstrap-theme.min.css" />
+			<link rel="stylesheet" type="text/css"
+				href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap/css/bootstrap.min.css" />
+		
+			<script
+				src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap/js/bootstrap.min.js"
+				type="text/javascript"></script>
+			<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/resources/css/style.css" />
+			
+			<style type="text/css">
+				.rich-table-subfootercell{
+					text-align: center;
+				}
+				.pagination{
+					width: 500px !important;	
+				}
+				
+				.sortby{
+					padding: 10px;
+					border-color: #ccc;
+					background-color: #fff;
+					border-style: double;
+				}
+			</style>
+			
+			<script type="text/javascript">
+		        function setCaretToEnd (e) {
+		            var control = $((e.target ? e.target : e.srcElement).id);
+		            if (control.createTextRange) {
+		                var range = control.createTextRange();
+		                range.collapse(false);
+		                range.select();
+		            }
+		            else if (control.setSelectionRange) {
+		                control.focus();
+		                var length = control.value.length;
+		                control.setSelectionRange(length, length);
+		            }
+		            control.selectionStart = control.selectionEnd = control.value.length;
+		        } 
+		
+		    </script>
+			<title>Synergix Management</title>
+		</head>
+		<body style="margin-top: 100px">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-3">
+						<a href="employee.jsf" class="btn btn-primary btn-lg pull-left" target="_blank">New</a>
+					</div>
+					<div class="col-sm-9">
+						<a4j:form>
+							<h:selectOneMenu styleClass="sortby pull-right" value="#{managerOfficalEmpController.orderBy}">
+							   <f:selectItem itemValue="emp_code" itemLabel="Employee Code" />
+							   <f:selectItem itemValue="gender" itemLabel="Gender" />	 
+							   <f:selectItem itemValue="birdth" itemLabel="Birdth Day" />	
+							   <f:selectItem itemValue="name" itemLabel="Name" />	   
+							   <a4j:support action="#{managerOfficalEmpController.filter}" ajaxSingle="true" event="onchange" reRender="outstanding_form" />							
+							</h:selectOneMenu>
+						</a4j:form>
+					</div>
+				</div>
+				
+				
+				<rich:tabPanel switchType="client" style="margin-top:20px">
+			        <rich:tab label="Outstanding">
+			            <h:form>
+							<rich:dataTable id="outstanding_form" value="#{managerOfficalEmpController.employees}"
+								var="emp" width="50% !important" styleClass="table">
+								
+								<f:facet name="header">
+					                <rich:columnGroup>
+					                    <rich:column colspan="4">
+					                        <h:outputText value="List Employees" />
+					                    </rich:column>
+					                    <rich:column breakBefore="true">
+					                        <h:outputText value="Employee Code" />
+					                    </rich:column>
+					                     <rich:column>
+					                       <h:outputText value="Gender" />
+					                    </rich:column>
+					                    <rich:column>
+					                       <h:outputText value="Birdth Day"/>
+					                    </rich:column>
+					                    <rich:column>
+					                       <h:outputText value="Name" />
+					                    </rich:column>
+					                </rich:columnGroup>
+					            </f:facet>
+								
+								<rich:column sortBy="#{emp.empCode}" style="text-align:center;" filterBy="#{emp.empCode}" filterEvent="onkeyup">
+									<f:facet name="footer">
+										<h:inputText value="#{managerOfficalEmpController.empFilter.filterEmpCode}">
+											<a4j:support event="onchange" action="#{managerOfficalEmpController.filter}" ajaxSingle="true" reRender="outstanding_form,oustanding_paging" />
+										</h:inputText>
+									</f:facet>	
+									<a href="employee.jsf?code=#{emp.empCode}" target="_blank"><h:outputText value="#{emp.empCode}" /></a>	
+								</rich:column>
+			
+								<rich:column sortBy="#{emp.gender}" style="text-align:center;" filterBy="#{emp.gender == 0 ? 'Male' : 'Female'}" filterEvent="onkeyup">
+									<f:facet name="footer">
+										<!-- <h:inputText value="#{managerOfficalEmpController.empFilter.filterGender}">
+											<a4j:support event="onchange" action="#{managerOfficalEmpController.filter}" ajaxSingle="true" reRender="outstanding_form,oustanding_paging" />
+										</h:inputText> -->
+										<h:selectOneMenu value="#{managerOfficalEmpController.empFilter.filterGender}" style="padding: 3px 10px;">
+											<f:selectItems value="#{managerOfficalEmpController.filterGender}"/>
+											<a4j:support event="onchange" action="#{managerOfficalEmpController.filter}" ajaxSingle="true" reRender="outstanding_form,oustanding_paging"/>
+										</h:selectOneMenu>
+									</f:facet>	
+									<h:outputText value="#{emp.gender == 0 ? 'Male' : 'Female'}" />
+								</rich:column>
+			
+								<rich:column sortBy="#{emp.birdth}" style="text-align:center;" filterMethod="#{dateFilter.filter}">
+									<f:facet name="header">
+					                    <h:inputText value="#{dateFilter.filterValue}" id="filterBirdth_outstanding">
+					                        <a4j:support event="onkeyup" reRender="outstanding_form" oncomplete="setCaretToEnd(event);"/>
+					                    </h:inputText>
+					                </f:facet>
+									<f:facet name="footer">
+										<h:inputText value="#{managerOfficalEmpController.empFilter.filterBirdth}">
+											<a4j:support event="onchange" action="#{managerOfficalEmpController.filter}" ajaxSingle="true" reRender="outstanding_form,oustanding_paging" />
+										</h:inputText>
+									</f:facet>	
+									<h:outputText value="#{emp.birdth}" converter="birdthDateConverter"/>
+								</rich:column>
+			
+								<rich:column sortBy="#{emp.name}" style="text-align:center;"  filterBy="#{emp.name}" filterEvent="onkeyup">
+									<f:facet name="footer">
+										<h:inputText value="#{managerOfficalEmpController.empFilter.filterName}">
+											<a4j:support event="onchange" action="#{managerOfficalEmpController.filter}" ajaxSingle="true" reRender="outstanding_form,oustanding_paging" />
+										</h:inputText>
+									</f:facet>	
+									<h:outputText value="#{emp.name}" />
+								</rich:column>
+							</rich:dataTable>
+							<center>
+								<nav>
+									<h:panelGroup id="oustanding_paging">
+										<ul class="pagination">
+											<li style="display:#{(managerOfficalEmpController.page.currentPage > 1) ? 'block' : 'none'}"><a4j:commandLink action="#{managerOfficalEmpController.previousPage}" reRender="outstanding_form,oustanding_paging"><span aria-hidden="true">«</span></a4j:commandLink></li>
+											<li style="display:#{(managerOfficalEmpController.page.tempPage[0] > 1) ? 'block' : 'none'}"><a4j:commandLink action="#{managerOfficalEmpController.firstPage}" reRender="outstanding_form,oustanding_paging"><span aria-hidden="true">1</span></a4j:commandLink></li>
+											<li style="display:#{(managerOfficalEmpController.page.tempPage[0] > 1) ? 'block' : 'none'}"><a href="#">...</a></li>
+											<ui:repeat var="page" value="#{managerOfficalEmpController.page.tempPage}">
+												<li class="#{page == managerOfficalEmpController.page.currentPage ? 'active' : ''}"><a4j:commandLink action="#{managerOfficalEmpController.getDataAtPage(page)}" value="#{page}" reRender="outstanding_form,oustanding_paging"/></li>
+											</ui:repeat>
+											<li style="display:#{(managerOfficalEmpController.page.lastTempPage lt managerOfficalEmpController.page.lastPage) ? 'block' : 'none'}"><a href="#">...</a></li>
+											<li style="display:#{(managerOfficalEmpController.page.lastTempPage lt managerOfficalEmpController.page.lastPage) ? 'block' : 'none'}"><a4j:commandLink action="#{managerOfficalEmpController.lastPage}" reRender="outstanding_form,oustanding_paging"><span aria-hidden="true">#{managerOfficalEmpController.page.lastPage}</span></a4j:commandLink></li>
+											<li style="display:#{(managerOfficalEmpController.page.currentPage lt managerOfficalEmpController.page.lastPage) ? 'block' : 'none'}"><a4j:commandLink action="#{managerOfficalEmpController.nextPage}" reRender="outstanding_form,oustanding_paging"><span aria-hidden="true">»</span></a4j:commandLink></li>
+										</ul>
+									</h:panelGroup>
+								</nav>
+							</center>
+						</h:form>
+			        </rich:tab>
+			        <rich:tab label="Draff">
+			            <h:form>
+							<rich:dataTable id="draff_form" value="#{managerDraffEmpController.employees}"
+								var="emp" width="50% !important" styleClass="table">
+								<f:facet name="header">
+					                <rich:columnGroup>
+					                    <rich:column colspan="4">
+					                        <h:outputText value="List Employees" />
+					                    </rich:column>
+					                    <rich:column breakBefore="true">
+					                        <h:outputText value="Employee Code" />
+					                    </rich:column>
+					                     <rich:column>
+					                       <h:outputText value="Gender" />
+					                    </rich:column>
+					                    <rich:column>
+					                       <h:outputText value="Birdth Day"/>
+					                    </rich:column>
+					                    <rich:column>
+					                       <h:outputText value="Name" />
+					                    </rich:column>
+					                </rich:columnGroup>
+					            </f:facet>
+								<rich:column sortBy="#{emp.empCode}" style="text-align:center;" filterBy="#{emp.empCode}" filterEvent="onkeyup">
+									<f:facet name="footer">
+										<h:inputText value="#{managerDraffEmpController.empFilter.filterEmpCode}">
+											<a4j:support event="onchange" action="#{managerDraffEmpController.filter}" ajaxSingle="true" reRender="draff_form,draff_paging" />
+										</h:inputText>
+									</f:facet>	
+									<a href="employee.jsf?id=#{emp.id}" target="_blank"><h:outputText value="#{emp.empCode eq '' ? 'unknow' : emp.empCode}" /></a>
+								</rich:column>
+			
+								<rich:column sortBy="#{emp.gender}" style="text-align:center;" filterBy="#{emp.gender == 0 ? 'Male' : 'Female'}" filterEvent="onkeyup">
+									<f:facet name="footer">
+										<!-- <h:inputText value="#{managerDraffEmpController.empFilter.filterGender}">
+											<a4j:support event="onchange" action="#{managerDraffEmpController.filter}" ajaxSingle="true" reRender="draff_form,draff_paging" />
+										</h:inputText> -->
+										<h:selectOneMenu value="#{managerDraffEmpController.empFilter.filterGender}" style="padding: 3px 10px;">
+											<f:selectItems value="#{managerDraffEmpController.filterGender}"/>
+											<a4j:support event="onchange" action="#{managerDraffEmpController.filter}" ajaxSingle="true" reRender="draff_form,draff_paging"/>
+										</h:selectOneMenu>
+									</f:facet>	
+									<h:outputText value="#{emp.showGender ? emp.gender : ''}"  style="display: #{emp.showGender ? 'block' : 'none'}"/>
+								</rich:column>
+			
+								<rich:column sortBy="#{emp.birdth}" style="text-align:center;" filterMethod="#{dateFilter.filter}">
+									<f:facet name="header">
+					                    <h:inputText value="#{dateFilter.filterValue}" id="filterBirdth_draff" onclick="setCaretToEnd(event);" >
+					                        <a4j:support event="onkeyup" reRender="draff_form" oncomplete="setCaretToEnd(event);"/>
+					                    </h:inputText>
+					                </f:facet>
+									<f:facet name="footer">
+										<h:inputText />
+									</f:facet>	
+									<h:outputText value="#{emp.birdth}" converter="birdthDateConverter"/>
+								</rich:column>
+			
+								<rich:column sortBy="#{emp.name}" style="text-align:center;"  filterBy="#{emp.name}" filterEvent="onkeyup">
+									<f:facet name="footer">
+										<h:inputText value="#{managerDraffEmpController.empFilter.filterName}">
+											<a4j:support event="onchange" action="#{managerDraffEmpController.filter}" ajaxSingle="true" reRender="draff_form,draff_paging" />
+										</h:inputText>
+									</f:facet>	
+									<h:outputText value="#{emp.name}" />
+								</rich:column>
+							</rich:dataTable>
+							<center>
+								<nav>
+									<h:panelGroup id="draff_paging">
+										<ul class="pagination">
+											<li style="display:#{(managerDraffEmpController.page.currentPage > 1) ? 'block' : 'none'}"><a4j:commandLink action="#{managerDraffEmpController.previousPage}" reRender="draff_form,draff_paging"><span aria-hidden="true">«</span></a4j:commandLink></li>
+											<li style="display:#{(managerDraffEmpController.page.tempPage[0] > 1) ? 'block' : 'none'}"><a4j:commandLink action="#{managerDraffEmpController.firstPage}" reRender="draff_form,draff_paging"><span aria-hidden="true">1</span></a4j:commandLink></li>
+											<li style="display:#{(managerOfficalEmpController.page.tempPage[0] > 1) ? 'block' : 'none'}"><a href="#">...</a></li>
+											<ui:repeat var="page" value="#{managerDraffEmpController.page.tempPage}">
+												<li class="#{page == managerDraffEmpController.page.currentPage ? 'active' : ''}"><a4j:commandLink action="#{managerDraffEmpController.getDataAtPage(page)}" value="#{page}" reRender="draff_form,draff_paging"/></li>
+											</ui:repeat>
+											<li style="display:#{(managerDraffEmpController.page.lastTempPage lt managerDraffEmpController.page.lastPage) ? 'block' : 'none'}"><a href="#">...</a></li>
+											<li style="display:#{(managerDraffEmpController.page.lastTempPage lt managerDraffEmpController.page.lastPage) ? 'block' : 'none'}"><a4j:commandLink action="#{managerDraffEmpController.lastPage}" reRender="form,draff_paging"><span aria-hidden="true">#{managerDraffEmpController.page.lastPage}</span></a4j:commandLink></li>
+											<li style="display:#{(managerDraffEmpController.page.currentPage lt managerDraffEmpController.page.lastPage) ? 'block' : 'none'}"><a4j:commandLink action="#{managerDraffEmpController.nextPage}" reRender="form,draff_paging"><span aria-hidden="true">»</span></a4j:commandLink></li>
+										</ul>
+									</h:panelGroup>
+								</nav>
+							</center>
+						</h:form>
+			        </rich:tab>
+			    </rich:tabPanel>
+			</div>
+		</body>
+	</f:view>
+</html>

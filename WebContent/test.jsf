@@ -1,0 +1,61 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:jsflot="http://www.jsflot.org/taglib/jsflot"
+	style="overflow: auto">
+<f:view contentType="text/html">
+	<h:form>
+		<rich:dataTable value="#{testPaging.personPaginatingDataModel}" var="person"
+			rows="5" reRender="scroller" id="simpletable" width="100%"
+			rowClasses="firstrow,secondrow">
+			<f:facet name="header">
+				<h:outputText value="Personen" />
+
+			</f:facet>
+			<rich:column width="20%">
+				<f:facet name="header">
+					<h:outputText value="SVNR" />
+
+				</f:facet>
+				<h:outputText value="#{person.empCode}" />
+
+			</rich:column>
+			<rich:column sortBy="#{person.name}" filterBy="#{person.name}"
+				filterEvent="onkeyup"
+				filterValue="#{personManager.currentVornameFilterValue}" width="20%">
+				<f:facet name="header">
+					<h:outputText value="Vorname" />
+
+				</f:facet>
+				<h:outputText value="#{person.name}" />
+
+			</rich:column>
+			<rich:column filterBy="#{person.address}" filterEvent="onkeyup"
+				filterValue="#{personManager.currentNachnameFilterValue}"
+				width="20%">
+				<f:facet name="header">
+					<h:outputText value="Nachname" />
+
+				</f:facet>
+				<h:outputText value="#{person.address}" />
+
+			</rich:column>
+			<rich:column width="20%">
+				<f:facet name="header">
+					<h:outputText value="Strasse" />
+
+				</f:facet>
+				<h:outputText value="#{person.birdth}" />
+
+			</rich:column>
+		</rich:dataTable>
+		<rich:datascroller id="scroller" renderIfSinglePage="false" ajaxSingle="false" rendered="true" maxPages="5" 
+			for="simpletable"></rich:datascroller>
+	</h:form>
+</f:view>
+</html>

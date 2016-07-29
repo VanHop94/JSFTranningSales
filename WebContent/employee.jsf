@@ -1,0 +1,175 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:jsflot="http://www.jsflot.org/taglib/jsflot"
+	style="overflow: auto">
+<f:view contentType="text/html">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap/css/bootstrap-theme.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/resources/css/style.css" />
+		<script src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+		<title>Synergix Employee</title>
+	</head>
+	<body style="margin-top: 100px">
+	
+		<!-- begin modal comfirm dialog -->
+		<style type="text/css">
+			.rich-mpnl-content{
+				border-style: hidden !important;
+			}
+			.rich-message-label{
+				color: red;
+			}
+		</style>
+		<rich:modalPanel id="confirmation" autosized="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+			    	<div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"></span></button>
+			        	<h4 class="modal-title">Delete Employee</h4>
+			      	</div>
+			      	<div class="modal-body">
+			        	<p>Do you want to delete #{employeeController.employee.empCode} ?</p>
+			      	</div>
+			      	<div class="modal-footer">
+			        	<button type="button" class="btn btn-default" data-dismiss="modal" onclick="#{rich:component('confirmation')}.hide();return false">Cancel</button>
+			        	<h:form style="display: inline;">
+			        		<h:commandButton  action="#{employeeController.delete}" value="Yes" styleClass="btn btn-primary"/>
+			        	</h:form>
+			      	</div>
+		    	</div>
+			</div>
+		</rich:modalPanel>
+		<!-- end modal comfirm dialog -->
+		
+		<!-- content -->
+		<div class="container">
+			<a4j:form styleClass="form-horizontal" style="margin-top: 20px" id="add_form">
+				<h:commandButton action="#{employeeController.close}" value="Close"  class="btn btn-warning btn-lg" style="margin-right: 5px"/>
+				<a href="employee.jsf" class="btn btn-primary btn-lg" style="margin-right: 5px">New</a>
+				<a4j:commandButton value="Abort" onclick="#{rich:component('confirmation')}.show();return false" style="margin-right: 5px" id="delete" styleClass="btn btn-danger btn-lg"/>
+				<fieldset style="margin-top: 10px">
+					<legend>Personal information:</legend>
+					<div class="form-group">
+						<label for="code" class="col-sm-2">Employee Code</label>
+						<div class="col-sm-3">
+							<h:inputText value="#{employeeController.employee.empCode}" required="true" requiredMessage="this field is not be empty"
+ 								id="code" validator="employeeCodeValidator" disabled="#{fn:length(employeeController.employee.empCode) gt 2}">
+								<a4j:support event="onchange" ajaxSingle="true" limitToList="true" reRender="err_code,address,birdth,name,short_name,type,ch,en,code,gender"/>
+							</h:inputText>
+						</div>
+						<div class="col-sm-7">
+							<rich:message for="code" id="err_code"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="name" class="col-sm-2">Employee Name</label>
+						<div class="col-sm-3">
+							<h:inputText value="#{employeeController.employee.name}" validatorMessage="Length of name is from 3 -> 20 character" required="true" requiredMessage="this field is not be empty"
+								id="name" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" converter="nomalizeStringConverter">
+								<f:validateLength maximum="20" minimum="3" />
+								<a4j:support event="onchange" ajaxSingle="true" limitToList="true" reRender="err_name,name"/>
+							</h:inputText>
+						</div>
+						<div class="col-sm-7">
+							<rich:message for="name" id="err_name"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="birdth" class="col-sm-2">Date of birdth</label>
+						<div class="col-sm-4">
+							<rich:calendar styleClass="input-group date" id="birdth"
+								value="#{employeeController.employee.birdth}" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}">
+								<f:validator validatorId="birdthDateValidator"/>
+								<a4j:support event="onchanged" ajaxSingle="true" limitToList="true" reRender="err_birdth" />
+							</rich:calendar>
+						</div>
+						<div class="col-sm-6">
+							<rich:message for="birdth" id="err_birdth"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="short_name" class="col-sm-2">Employee Short Name</label>
+						<div class="col-sm-3">
+							<h:inputText value="#{employeeController.employee.shortName}" validatorMessage="Length of short name is from 2 -> 20 character" required="true" requiredMessage="this field is not be empty"
+								id="short_name" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" converter="nomalizeStringConverter">
+								<f:validateLength maximum="20" minimum="2"/>
+								<a4j:support event="onchange" ajaxSingle="true" limitToList="true" reRender="err_short_name,short_name"/>
+							</h:inputText>
+						</div>
+						<div class="col-sm-7">
+							<rich:message for="short_name" id="err_short_name"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="gender" class="col-sm-2">Gender</label>
+						<div class="col-sm-3">
+							<h:selectOneRadio value="#{employeeController.employee.gender}" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" id="gender">
+								<f:selectItems value="#{employeeController.gender}" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:selectOneRadio>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="language" class="col-sm-2">Language</label>
+						<div class="col-sm-3">
+							<h:selectBooleanCheckbox
+								value="#{employeeController.employee.hasEnglishLanguage}" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" id="en">
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:selectBooleanCheckbox>
+							English
+							<h:selectBooleanCheckbox
+								value="#{employeeController.employee.hasChinaLanguage}" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" id="ch">
+								<a4j:support event="onchange" ajaxSingle="true"/>
+							</h:selectBooleanCheckbox>
+							China
+						</div>
+					</div>
+
+				 <div class="form-group">
+						<label for="type" class="col-sm-2">Employe Type</label>
+						<div class="col-sm-3">
+							<h:selectOneMenu value="#{employeeController.employee.type}" validatorMessage="You must choose 1 of 3" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" id="type">
+								<f:selectItems value="#{employeeController.typeEmployee}"/>
+								<f:validateDoubleRange minimum="0" maximum="2" />
+								<a4j:support event="onchange" ajaxSingle="true" reRender="err_type,type"/>
+							</h:selectOneMenu>
+						</div>
+						
+						<div class="col-sm-7">
+							<rich:message for="type" id="err_type"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="address" class="col-sm-2">Address</label>
+						<div class="col-sm-3" id="address">
+							<h:inputText value="#{employeeController.employee.address}" required="true"
+								requiredMessage="this field is not be empty" validatorMessage="Length of address is from 3 -> 100 character"
+								id="address" disabled= "#{fn:length(employeeController.employee.empCode) lt 3}" converter="nomalizeStringConverter">
+								<a4j:support event="onchange" ajaxSingle="true" limitToList="true" reRender="err_address,address"/>
+								<f:validateLength minimum="3" maximum="100"/>
+							</h:inputText>
+						</div>
+						<div class="col-sm-7">
+							<rich:message for="address" id="err_address"/>
+						</div>
+					</div>
+				</fieldset>
+			</a4j:form>
+		</div>
+	</body>
+</f:view>
+</html>
